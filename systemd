@@ -1,0 +1,41 @@
+Setup systemd service
+vi /etc/systemd/system/nodeapp.service
+
+[Unit]
+Description=Node.js App with Express
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/root/nodeapp
+EnvironmentFile=/root/nodeapp/.env
+ExecStart=/usr/bin/node app.js
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+*************************
+Enable and start
+systemctl daemon-reload
+systemctl enable nodeapp
+systemctl start nodeapp
+systemctl status nodeapp
+
+*******************
+Test CRUD endpoints
+# Create
+curl -X POST http://3.236.198.195:3000/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title": "My first Node task"}'
+
+# Read all
+curl http://3.236.198.195:3000/tasks
+
+# Update
+curl -X PUT http://3.236.198.195:3000/tasks/1 \
+  -H "Content-Type: application/json" \
+  -d '{"done": true}'
+
+# Delete
+curl -X DELETE http://3.236.198.195:3000/tasks/1
